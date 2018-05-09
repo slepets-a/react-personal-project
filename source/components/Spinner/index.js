@@ -1,10 +1,10 @@
 // Core
-import React, { Component } from "react";
+import React from "react";
 
 // Instruments
 import Styles from "./styles.m.css";
 
-export default class Spinner extends Component {
+export default class Spinner extends React.Component {
     render () {
         const { spin } = this.props;
 
