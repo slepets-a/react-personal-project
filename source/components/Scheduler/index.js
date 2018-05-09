@@ -1,6 +1,12 @@
+// Core
 import React from "react";
 
-import Styles from "./styles.m";
+// Instruments
+import Styles from "./styles.m.css";
+
+// Components
+import Task from 'components/Task';
+import Checkbox from 'theme/assets/Checkbox';
 
 class Scheduler extends React.Component {
     render () {
@@ -8,22 +14,29 @@ class Scheduler extends React.Component {
             <section className = { Styles.scheduler }>
                 <main>
                     <header>
-                        <h1>Title</h1>
-                        <input placeholder = 'first input' type = 'text' />
+                        <h1>Планировщик задач</h1>
+                        <input placeholder = 'Поиск' type = 'text' />
                     </header>
-                    <input placeholder = 'second input' type = 'text' />
                     <section>
-                        <form action = ''>
-                            <input placeholder = 'Form input' type = 'text' />
-                            <button>Button</button>
+                        <form>
+                            <input placeholder = 'Описание моей новой задачи' type = 'text' />
+                            <button>Добавить задачу</button>
                         </form>
-                        <div className = 'overlay' />
-                        <ul />
+                        <div className = { Styles.overlay } >
+                            <ul>
+                                <Task />
+                            </ul>
+                        </div>
                     </section>
-                    <div className = 'footer'>
-                        <div />
-                        <div className = 'completeAllTasks' />
-                    </div>
+                    <footer>
+                        <Checkbox
+                            inlineBlock
+                            checked = { false }
+                            color1 = '#363636'
+                            color2 = '#fff'
+                        />
+                        <span className = { Styles.completeAllTasks } >Все задачи выполнены</span>
+                    </footer>
                 </main>
             </section>
         );
