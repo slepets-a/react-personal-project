@@ -1,5 +1,6 @@
 // Core
 import React from 'react';
+import cx from 'classnames';
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -14,6 +15,7 @@ class Task extends React.Component {
     constructor () {
         super();
         this.togglePriority = this._togglePriority.bind(this);
+        this.toggleFulfillment = this._toggleFulfillment.bind(this);
     }
 
     _togglePriority () {
@@ -25,15 +27,27 @@ class Task extends React.Component {
         toggleTaskPriority(id);
     }
 
+    _toggleFulfillment () {
+        const {
+            id,
+            toggleTaskFulfillment,
+        } = this.props;
+
+        toggleTaskFulfillment(id);
+    }
+
     render () {
         const {
             message,
             completed,
             favorite,
         } = this.props;
+        const taskStyle = cx(Styles.task, {
+            [Styles.completed]: completed,
+        });
 
         return (
-            <li className = { Styles.task }>
+            <li className = { taskStyle }>
                 <div className = { Styles.content } >
                     <Checkbox
                         inlineBlock
@@ -41,6 +55,7 @@ class Task extends React.Component {
                         className = { Styles.complete }
                         color1 = '#3b8ef3'
                         color2 = '#fff'
+                        onClick = { this.toggleFulfillment }
                     />
                     <input defaultValue = { message } type = 'text' />
                 </div>
