@@ -12,21 +12,28 @@ import Remove from 'theme/assets/Remove';
 
 class Task extends React.Component {
     render () {
+        const {
+            message,
+            completed,
+            favorite,
+        } = this.props;
+
         return (
             <li className = { Styles.task }>
                 <div className = { Styles.content } >
                     <Checkbox
                         inlineBlock
-                        checked = { false }
+                        checked = { completed }
                         className = { Styles.complete }
                         color1 = '#3b8ef3'
                         color2 = '#fff'
                     />
-                    <input type = 'text' />
+                    <input defaultValue = { message } type = 'text' />
                 </div>
                 <div className = { Styles.actions }>
                     <Star
                         inlineBlock
+                        checked = { favorite }
                         className = { Styles.setPriority }
                         color1 = '#3B8EF3'
                         color2 = '#000'
