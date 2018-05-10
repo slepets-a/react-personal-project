@@ -14,8 +14,15 @@ import Remove from 'theme/assets/Remove';
 class Task extends React.Component {
     constructor () {
         super();
+        this.state = {
+            isEditable:  false,
+            description: '',
+        };
         this.togglePriority = this._togglePriority.bind(this);
         this.toggleFulfillment = this._toggleFulfillment.bind(this);
+        this.toggleEdit = this._toggleEdit.bind(this);
+        this.onDescriptionChangeHandler = this._onDescriptionChangeHandler.bind(this);
+        this.onEnterKeyHandler = this._onEnterKeyHandler.bind(this);
     }
 
     _togglePriority () {
@@ -36,12 +43,44 @@ class Task extends React.Component {
         toggleTaskFulfillment(id);
     }
 
+    _toggleEdit () {
+        const {
+            message,
+        } = this.props;
+
+        this.setState(({ isEditable }) => ({
+            isEditable:  !isEditable,
+            description: message,
+        }));
+    }
+
+    _onDescriptionChangeHandler ({ target: { value }}) {
+        this.setState({
+            description: value,
+        });
+    }
+
+    _onEnterKeyHandler (event) {
+        const {
+            id,
+            updateTaskHandler,
+        } = this.props;
+
+        if (event.key === 'Enter') {
+            updateTaskHandler(id);
+        }
+    }
+
     render () {
         const {
             message,
             completed,
             favorite,
         } = this.props;
+        const {
+            isEditable,
+            description,
+        } = this.state;
         const taskStyle = cx(Styles.task, {
             [Styles.completed]: completed,
         });
@@ -57,7 +96,20 @@ class Task extends React.Component {
                         color2 = '#fff'
                         onClick = { this.toggleFulfillment }
                     />
-                    <input defaultValue = { message } type = 'text' />
+                    {
+                        isEditable
+                            ? (
+                                <input
+                                    autoFocus
+                                    type = 'text'
+                                    value = { description }
+                                    onChange = { this.onDescriptionChangeHandler }
+                                    onKeyPress = { this.onEnterKeyHandler }
+                                />
+                            )
+                            : <span>{ message }</span>
+                    }
+
                 </div>
                 <div className = { Styles.actions }>
                     <Star
@@ -73,6 +125,7 @@ class Task extends React.Component {
                         className = { Styles.edit }
                         color1 = '#3B8EF3'
                         color2 = '#000'
+                        onClick = { this.toggleEdit }
                     />
                     <Remove
                         inlineBlock

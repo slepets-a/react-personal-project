@@ -58,6 +58,7 @@ class Scheduler extends React.Component {
         this.sortTasks = this._sortTasks.bind(this);
         this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
         this.toggleTaskFulfillment = this._toggleTaskFulfillment.bind(this);
+        this.updateTaskHandler = this._updateTaskHandler.bind(this);
     }
 
     componentWillMount () {
@@ -82,7 +83,9 @@ class Scheduler extends React.Component {
                     modified:  currentTimeStamp,
                 }, ...tasks],
                 taskDescription: '',
-            }));
+            }), () => {
+                this.sortTasks();
+            });
         }
     }
 
@@ -145,6 +148,10 @@ class Scheduler extends React.Component {
         });
     }
 
+    _updateTaskHandler (id) {
+        console.log(`updating the task ${id}`);
+    }
+
     render () {
         const {
             tasks,
@@ -155,6 +162,7 @@ class Scheduler extends React.Component {
             key = { task.id }
             toggleTaskFulfillment = { this.toggleTaskFulfillment }
             toggleTaskPriority = { this.toggleTaskPriority }
+            updateTaskHandler = { this.updateTaskHandler }
             { ...task }
         />));
 
