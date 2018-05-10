@@ -55,7 +55,6 @@ class Scheduler extends React.Component {
         };
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
         this.onInputChangeHandler = this._onInputChangeHandler.bind(this);
-        this.onSendTaskHandler = this._onSendTaskHandler.bind(this);
     }
 
     _onAddTaskHandler (event) {
@@ -68,7 +67,7 @@ class Scheduler extends React.Component {
         if (taskDescription) {
             this.setState(({ tasks }) => ({
                 tasks: [{
-                    id:        '123ss'+Math.random(),
+                    id:        `123ss${Math.random()}`,
                     message:   taskDescription,
                     completed: false,
                     favorite:  false,
@@ -76,21 +75,14 @@ class Scheduler extends React.Component {
                     modified:  currentTimeStamp,
                 }, ...tasks],
                 taskDescription: '',
-            }), () => {
-                console.log(this.state.tasks);
-            });
+            }));
         }
     }
 
     _onInputChangeHandler ({ target: { value }}) {
         this.setState({
-            // id,
             taskDescription: value,
         });
-    }
-
-    _onSendTaskHandler (event) {
-        console.log(event.nativeEvent.keyCode);
     }
 
     render () {
@@ -111,11 +103,11 @@ class Scheduler extends React.Component {
                     <section>
                         <form>
                             <input
+                                autoFocus
                                 maxLength = { 50 }
                                 placeholder = 'Описание моей новой задачи'
                                 type = 'text' value = { taskDescription }
                                 onChange = { this.onInputChangeHandler }
-                                onKeyPress = { this.onSendTaskHandler }
                             />
                             <button onClick = { this.onAddTaskHandler }>Добавить задачу</button>
                         </form>
