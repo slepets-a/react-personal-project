@@ -11,6 +11,20 @@ import Edit from 'theme/assets/Edit';
 import Remove from 'theme/assets/Remove';
 
 class Task extends React.Component {
+    constructor () {
+        super();
+        this.togglePriority = this._togglePriority.bind(this);
+    }
+
+    _togglePriority () {
+        const {
+            id,
+            toggleTaskPriority,
+        } = this.props;
+
+        toggleTaskPriority(id);
+    }
+
     render () {
         const {
             message,
@@ -37,6 +51,7 @@ class Task extends React.Component {
                         className = { Styles.setPriority }
                         color1 = '#3B8EF3'
                         color2 = '#000'
+                        onClick = { this.togglePriority }
                     />
                     <Edit
                         inlineBlock

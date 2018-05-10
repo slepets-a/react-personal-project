@@ -56,6 +56,7 @@ class Scheduler extends React.Component {
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
         this.onInputChangeHandler = this._onInputChangeHandler.bind(this);
         this.sortTasks = this._sortTasks.bind(this);
+        this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
     }
 
     componentWillMount () {
@@ -90,6 +91,18 @@ class Scheduler extends React.Component {
         });
     }
 
+    _toggleTaskPriority (id) {
+        this.setState(({ tasks }) => ({
+            tasks: tasks.map(
+                (task) => task.id === id
+                    ? { ...task, favorite: !task.favorite }
+                    : task
+            ),
+        }), () => {
+            this.sortTasks();
+        });
+    }
+
     _sortTasks () {
         const {
             tasks,
@@ -101,10 +114,10 @@ class Scheduler extends React.Component {
         };
 
         tasks.forEach((task) => {
-            if (task.favorite) {
-                sortedTasks.favorite.push(task);
-            } else if (task.completed) {
+            if (task.completed) {
                 sortedTasks.completed.push(task);
+            } else if (task.favorite) {
+                sortedTasks.favorite.push(task);
             } else {
                 sortedTasks.regular.push(task);
             }
@@ -125,7 +138,7 @@ class Scheduler extends React.Component {
             taskDescription,
         } = this.state;
 
-        const renderTasks = tasks.map((task) => <Task key = { task.id } { ...task } />);
+        const renderTasks = tasks.map((task) => <Task key = { task.id } toggleTaskPriority = { this.toggleTaskPriority } { ...task } />);
 
         return (
             <section className = { Styles.scheduler }>
