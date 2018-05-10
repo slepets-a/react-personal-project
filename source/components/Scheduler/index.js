@@ -15,12 +15,6 @@ class Scheduler extends React.Component {
         this.state = {
             tasks: [
                 {
-                    "id":        "xpa",
-                    "message":   "Stop being such retard",
-                    "completed": false,
-                    "favorite":  true,
-                },
-                {
                     "id":        "xjh",
                     "message":   "Успешно пройти React-интенсив компании Lectrum",
                     "completed": false,
@@ -39,6 +33,12 @@ class Scheduler extends React.Component {
                     "favorite":  false,
                 },
                 {
+                    "id":        "xpa",
+                    "message":   "Stop being such retard",
+                    "completed": false,
+                    "favorite":  true,
+                },
+                {
                     "id":        "rjh",
                     "message":   "Записать собаку на груминг",
                     "completed": false,
@@ -55,6 +55,11 @@ class Scheduler extends React.Component {
         };
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
         this.onInputChangeHandler = this._onInputChangeHandler.bind(this);
+        this.sortTasks = this._sortTasks.bind(this);
+    }
+
+    componentWillMount () {
+        this.sortTasks();
     }
 
     _onAddTaskHandler (event) {
@@ -82,6 +87,35 @@ class Scheduler extends React.Component {
     _onInputChangeHandler ({ target: { value }}) {
         this.setState({
             taskDescription: value,
+        });
+    }
+
+    _sortTasks () {
+        const {
+            tasks,
+        } = this.state;
+        const sortedTasks = {
+            favorite:  [],
+            regular:   [],
+            completed: [],
+        };
+
+        tasks.forEach((task) => {
+            if (task.favorite) {
+                sortedTasks.favorite.push(task);
+            } else if (task.completed) {
+                sortedTasks.completed.push(task);
+            } else {
+                sortedTasks.regular.push(task);
+            }
+        });
+
+        this.setState({
+            tasks: [
+                ...sortedTasks.favorite,
+                ...sortedTasks.regular,
+                ...sortedTasks.completed
+            ],
         });
     }
 
