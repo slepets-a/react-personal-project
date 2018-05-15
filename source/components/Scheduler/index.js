@@ -1,6 +1,8 @@
 // Core
 import React from "react";
 
+import { url, token } from 'config/api';
+
 // Instruments
 import Styles from "./styles.m.css";
 import moment from 'moment';
@@ -15,60 +17,28 @@ class Scheduler extends React.Component {
         super();
         this.state = {
             isSpinnerShowing: false,
-            tasks:            [
-                {
-                    "id":        "xjh",
-                    "message":   "Успешно пройти React-интенсив компании Lectrum",
-                    "completed": false,
-                    "favorite":  true,
-                },
-                {
-                    "id":        "xjr",
-                    "message":   "Взять автограф у Джареда Лето",
-                    "completed": false,
-                    "favorite":  false,
-                },
-                {
-                    "id":        "xrh",
-                    "message":   "Зарегестрировать бабушку в Твиче",
-                    "completed": false,
-                    "favorite":  false,
-                },
-                {
-                    "id":        "xpa",
-                    "message":   "Stop being such retard",
-                    "completed": false,
-                    "favorite":  true,
-                },
-                {
-                    "id":        "rjh",
-                    "message":   "Записать собаку на груминг",
-                    "completed": false,
-                    "favorite":  false,
-                },
-                {
-                    "id":        "xph",
-                    "message":   "Научиться играть на барабанах",
-                    "completed": true,
-                    "favorite":  false,
-                }
-            ],
-            tasksFilter:     '',
-            taskDescription: '',
+            tasks:            [],
+            tasksFilter:      '',
+            taskDescription:  '',
         };
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
         this.onInputChangeHandler = this._onInputChangeHandler.bind(this);
         this.sortTasks = this._sortTasks.bind(this);
-        this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
+        // this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
         this.toggleTaskFulfillment = this._toggleTaskFulfillment.bind(this);
         this.updateTaskHandler = this._updateTaskHandler.bind(this);
-        this.removeTaskHandler = this._removeTaskHandler.bind(this);
         this.onCheckAllAsDoneHandler = this._onCheckAllAsDoneHandler.bind(this);
         this.areAllTasksDone = this._areAllTasksDone.bind(this);
         this.filterTasksHandler = this._filterTasksHandler.bind(this);
+        this.showSpinner = this._showSpinner.bind(this);
+        this.fetchTasks = this._fetchTasks.bind(this);
+        this.createTask = this._createTask.bind(this);
+        this.removeTask = this._removeTask.bind(this);
+        this.updateTask = this._updateTask.bind(this);
     }
 
-    componentWillMount () {
+    componentDidMount () {
+        this.fetchTasks();
         this.sortTasks();
     }
 
@@ -76,23 +46,11 @@ class Scheduler extends React.Component {
         const {
             taskDescription,
         } = this.state;
-        const currentTimeStamp = moment().format("MMMM D h:mm:ss a");
 
         event.preventDefault();
         if (taskDescription) {
-            this.setState(({ tasks }) => ({
-                tasks: [{
-                    id:        `123ss${Math.random()}`,
-                    message:   taskDescription,
-                    completed: false,
-                    favorite:  false,
-                    created:   currentTimeStamp,
-                    modified:  currentTimeStamp,
-                }, ...tasks],
-                taskDescription: '',
-            }), () => {
-                this.sortTasks();
-            });
+            this.createTask(taskDescription);
+            this.sortTasks();
         }
     }
 
@@ -102,17 +60,17 @@ class Scheduler extends React.Component {
         });
     }
 
-    _toggleTaskPriority (id) {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(
-                (task) => task.id === id
-                    ? { ...task, favorite: !task.favorite }
-                    : task
-            ),
-        }), () => {
-            this.sortTasks();
-        });
-    }
+    // _toggleTaskPriority (id) {
+    //     this.setState(({ tasks }) => ({
+    //         tasks: tasks.map(
+    //             (task) => task.id === id
+    //                 ? { ...task, favorite: !task.favorite }
+    //                 : task
+    //         ),
+    //     }), () => {
+    //         this.sortTasks();
+    //     });
+    // }
 
     _toggleTaskFulfillment (id) {
         this.setState(({ tasks }) => ({
@@ -179,12 +137,6 @@ class Scheduler extends React.Component {
         }));
     }
 
-    _removeTaskHandler (id) {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.filter((post) => post.id !== id),
-        }));
-    }
-
     _onCheckAllAsDoneHandler () {
         if (!this.areAllTasksDone()) {
             this.setState(({ tasks }) => ({
@@ -193,6 +145,131 @@ class Scheduler extends React.Component {
                     completed: true,
                 })),
             }));
+        }
+    }
+
+    _showSpinner (state) {
+        this.setState({
+            isSpinnerShowing: state,
+        });
+    }
+
+    async _fetchTasks () {
+        this.showSpinner(true);
+        try {
+            const response = await fetch(url, {
+                method:  'GET',
+                headers: {
+                    Authorization:  token,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status !== 200) {
+                throw new Error("Fetch tasks failed");
+            }
+            const { data } = await response.json();
+
+            this.setState(({ tasks }) => ({
+                tasks: [...data, ...tasks],
+            }));
+        } catch ({ message }) {
+            console.log(message);
+        } finally {
+            this.showSpinner(false);
+        }
+    }
+
+    async _createTask (message) {
+        this.showSpinner(true);
+        try {
+            const response = await fetch(url, {
+                method:  'POST',
+                headers: {
+                    Authorization:  token,
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify({ message }),
+            });
+
+            if (response.status !== 200) {
+                throw new Error("Create task failed");
+            }
+            const { data } = await response.json();
+
+            this.setState(({ tasks }) => ({
+                tasks:           [data, ...tasks],
+                taskDescription: '',
+            }));
+        } catch ({ message: errMessage }) {
+            console.log(errMessage);
+        } finally {
+            this.showSpinner(false);
+        }
+    }
+
+    async _removeTask (id) {
+        this.showSpinner(true);
+        try {
+            const response = await fetch(`${url}/${id}`, {
+                method:  'DELETE',
+                headers: {
+                    Authorization: token,
+                },
+            });
+
+            if (response.status !== 204) {
+                throw new Error("Remove task failed");
+            }
+
+            this.setState(({ tasks }) => ({
+                tasks: tasks.filter((task) => task.id !== id),
+            }));
+        } catch ({ message: errMessage }) {
+            console.log(errMessage);
+        } finally {
+            this.showSpinner(false);
+        }
+    }
+
+    async _updateTask ({ id, message, completed, favorite }) {
+        this.showSpinner(true);
+        try {
+            const response = await fetch(url, {
+                method:  'PUT',
+                headers: {
+                    Authorization:  token,
+                    'Content-Type': "application/json",
+                },
+                body: JSON.stringify([{
+                    id,
+                    message,
+                    completed,
+                    favorite,
+                }]),
+            });
+
+            const { data } = await response.json();
+
+            console.log(data);
+
+            if (response.status !== 200) {
+                throw new Error("Edit task failed");
+            }
+
+            this.setState(({ tasks }) => ({
+                tasks: tasks.map(
+                    (task) => task.id === data[0].id
+                        ? {
+                            ...data[0],
+                        }
+                        : task
+                ),
+            }));
+        } catch ({ message: errMessage }) {
+            console.log(errMessage);
+        } finally {
+            this.showSpinner(false);
         }
     }
 
@@ -208,9 +285,9 @@ class Scheduler extends React.Component {
             .filter(({ message }) => message.includes(tasksFilter))
             .map((task) => (<Task
                 key = { task.id }
-                removeTaskHandler = { this.removeTaskHandler }
+                removeTaskHandler = { this.removeTask }
                 toggleTaskFulfillment = { this.toggleTaskFulfillment }
-                toggleTaskPriority = { this.toggleTaskPriority }
+                toggleTaskPriority = { this.updateTask }
                 updateTaskHandler = { this.updateTaskHandler }
                 { ...task }
             />));

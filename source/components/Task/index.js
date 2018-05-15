@@ -30,10 +30,18 @@ class Task extends React.Component {
     _togglePriority () {
         const {
             id,
+            message,
+            completed,
+            favorite,
             toggleTaskPriority,
         } = this.props;
 
-        toggleTaskPriority(id);
+        toggleTaskPriority({
+            id,
+            message,
+            completed,
+            favorite: !favorite,
+        });
     }
 
     _toggleFulfillment () {
