@@ -22,7 +22,7 @@ class Task extends React.Component {
         this.toggleFulfillment = this._toggleFulfillment.bind(this);
         this.toggleEdit = this._toggleEdit.bind(this);
         this.onDescriptionChangeHandler = this._onDescriptionChangeHandler.bind(this);
-        this.onEnterKeyHandler = this._onEnterKeyHandler.bind(this);
+        this.onSaveActionHandler = this._onSaveActionHandler.bind(this);
     }
 
     _togglePriority () {
@@ -47,27 +47,43 @@ class Task extends React.Component {
         const {
             message,
         } = this.props;
+        const {
+            isEditable,
+        } = this.state;
 
-        this.setState(({ isEditable }) => ({
-            isEditable:  !isEditable,
-            description: message,
-        }));
+        if (isEditable) {
+            this.onSaveActionHandler();
+            this.setState({
+                isEditable: false,
+            });
+        } else {
+            this.setState({
+                isEditable:  true,
+                description: message,
+            });
+        }
     }
 
     _onDescriptionChangeHandler ({ target: { value }}) {
         this.setState({
-            description: value,
+            description: value.slice(0, 50),
         });
     }
 
-    _onEnterKeyHandler (event) {
+    _onSaveActionHandler (event) {
         const {
             id,
             updateTaskHandler,
         } = this.props;
+        const {
+            description,
+        } = this.state;
 
         if (event.key === 'Enter') {
-            updateTaskHandler(id);
+            updateTaskHandler(id, description);
+            this.setState({
+                isEditable: false,
+            });
         }
     }
 
@@ -101,10 +117,11 @@ class Task extends React.Component {
                             ? (
                                 <input
                                     autoFocus
+                                    maxLength = { 50 }
                                     type = 'text'
                                     value = { description }
                                     onChange = { this.onDescriptionChangeHandler }
-                                    onKeyPress = { this.onEnterKeyHandler }
+                                    onKeyPress = { this.onSaveActionHandler }
                                 />
                             )
                             : <span>{ message }</span>

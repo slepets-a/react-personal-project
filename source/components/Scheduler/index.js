@@ -91,7 +91,7 @@ class Scheduler extends React.Component {
 
     _onInputChangeHandler ({ target: { value }}) {
         this.setState({
-            taskDescription: value,
+            taskDescription: value.slice(0, 50),
         });
     }
 
@@ -148,8 +148,15 @@ class Scheduler extends React.Component {
         });
     }
 
-    _updateTaskHandler (id) {
-        console.log(`updating the task ${id}`);
+    _updateTaskHandler (id, description) {
+        this.setState(({ tasks }) => ({
+            tasks: tasks.map(
+                (task) => task.id === id
+                    ? { ...task, message: description }
+                    : task,
+            ),
+        }));
+        console.log(id, description);
     }
 
     render () {
