@@ -8,12 +8,14 @@ import moment from 'moment';
 // Components
 import Task from 'components/Task';
 import Checkbox from 'theme/assets/Checkbox';
+import Spinner from 'components/Spinner';
 
 class Scheduler extends React.Component {
     constructor () {
         super();
         this.state = {
-            tasks: [
+            isSpinnerShowing: false,
+            tasks:            [
                 {
                     "id":        "xjh",
                     "message":   "Успешно пройти React-интенсив компании Lectrum",
@@ -196,6 +198,7 @@ class Scheduler extends React.Component {
 
     render () {
         const {
+            isSpinnerShowing,
             tasks,
             tasksFilter,
             taskDescription,
@@ -214,6 +217,7 @@ class Scheduler extends React.Component {
 
         return (
             <section className = { Styles.scheduler }>
+                <Spinner isSpinning = { isSpinnerShowing } />
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>
