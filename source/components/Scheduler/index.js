@@ -51,6 +51,7 @@ class Scheduler extends React.Component {
                     "favorite":  false,
                 }
             ],
+            tasksFilter:     '',
             taskDescription: '',
         };
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
@@ -62,6 +63,7 @@ class Scheduler extends React.Component {
         this.removeTaskHandler = this._removeTaskHandler.bind(this);
         this.onCheckAllAsDoneHandler = this._onCheckAllAsDoneHandler.bind(this);
         this.areAllTasksDone = this._areAllTasksDone.bind(this);
+        this.filterTasksHandler = this._filterTasksHandler.bind(this);
     }
 
     componentWillMount () {
@@ -130,6 +132,12 @@ class Scheduler extends React.Component {
         return tasks.every((task) => task.completed);
     }
 
+    _filterTasksHandler ({ target: { value }}) {
+        this.setState({
+            tasksFilter: value,
+        });
+    }
+
     _sortTasks () {
         const {
             tasks,
@@ -189,24 +197,32 @@ class Scheduler extends React.Component {
     render () {
         const {
             tasks,
+            tasksFilter,
             taskDescription,
         } = this.state;
 
-        const renderTasks = tasks.map((task) => (<Task
-            key = { task.id }
-            removeTaskHandler = { this.removeTaskHandler }
-            toggleTaskFulfillment = { this.toggleTaskFulfillment }
-            toggleTaskPriority = { this.toggleTaskPriority }
-            updateTaskHandler = { this.updateTaskHandler }
-            { ...task }
-        />));
+        const renderTasks = tasks
+            .filter(({ message }) => message.includes(tasksFilter))
+            .map((task) => (<Task
+                key = { task.id }
+                removeTaskHandler = { this.removeTaskHandler }
+                toggleTaskFulfillment = { this.toggleTaskFulfillment }
+                toggleTaskPriority = { this.toggleTaskPriority }
+                updateTaskHandler = { this.updateTaskHandler }
+                { ...task }
+            />));
 
         return (
             <section className = { Styles.scheduler }>
                 <main>
                     <header>
                         <h1>Планировщик задач</h1>
-                        <input placeholder = 'Поиск' type = 'text' />
+                        <input
+                            placeholder = 'Поиск'
+                            type = 'text'
+                            value = { tasksFilter }
+                            onChange = { this.filterTasksHandler }
+                        />
                     </header>
                     <section>
                         <form>
