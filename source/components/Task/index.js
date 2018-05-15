@@ -1,5 +1,6 @@
 // Core
 import React from 'react';
+import { func, string, bool } from 'prop-types';
 import cx from 'classnames';
 
 // Instruments
@@ -162,5 +163,16 @@ class Task extends React.Component {
         );
     }
 }
+
+Task.propTypes = {
+    completed:             bool.isRequired,
+    favorite:              bool.isRequired,
+    id:                    string.isRequired,
+    message:               string.isRequired,
+    removeTaskHandler:     func.isRequired,
+    toggleTaskFulfillment: func.isRequired,
+    toggleTaskPriority:    func.isRequired,
+    updateTaskHandler:     func.isRequired,
+};
 
 export default Task;
