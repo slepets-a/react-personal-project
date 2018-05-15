@@ -60,6 +60,8 @@ class Scheduler extends React.Component {
         this.toggleTaskFulfillment = this._toggleTaskFulfillment.bind(this);
         this.updateTaskHandler = this._updateTaskHandler.bind(this);
         this.removeTaskHandler = this._removeTaskHandler.bind(this);
+        this.onCheckAllAsDoneHandler = this._onCheckAllAsDoneHandler.bind(this);
+        this.areAllTasksDone = this._areAllTasksDone.bind(this);
     }
 
     componentWillMount () {
@@ -120,6 +122,14 @@ class Scheduler extends React.Component {
         });
     }
 
+    _areAllTasksDone () {
+        const {
+            tasks,
+        } = this.state;
+
+        return tasks.every((task) => task.completed);
+    }
+
     _sortTasks () {
         const {
             tasks,
@@ -165,6 +175,17 @@ class Scheduler extends React.Component {
         }));
     }
 
+    _onCheckAllAsDoneHandler () {
+        if (!this.areAllTasksDone()) {
+            this.setState(({ tasks }) => ({
+                tasks: tasks.map((task) => ({
+                    ...task,
+                    completed: true,
+                })),
+            }));
+        }
+    }
+
     render () {
         const {
             tasks,
@@ -204,14 +225,14 @@ class Scheduler extends React.Component {
                             </ul>
                         </div>
                     </section>
-                    <footer>
+                    <footer onClick = { this.onCheckAllAsDoneHandler }>
                         <Checkbox
                             inlineBlock
-                            checked = { false }
+                            checked = { this.areAllTasksDone() }
                             color1 = '#363636'
                             color2 = '#fff'
                         />
-                        <span className = { Styles.completeAllTasks }>Все задачи выполнены</span>
+                        <span className = { Styles.completeAllTasks } >Все задачи выполнены</span>
                     </footer>
                 </main>
             </section>
