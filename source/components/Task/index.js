@@ -22,7 +22,8 @@ class Task extends React.Component {
         this.toggleFulfillment = this._toggleFulfillment.bind(this);
         this.toggleEdit = this._toggleEdit.bind(this);
         this.onDescriptionChangeHandler = this._onDescriptionChangeHandler.bind(this);
-        this.onSaveActionHandler = this._onSaveActionHandler.bind(this);
+        this.onKeyPressHandler = this._onKeyPressHandler.bind(this);
+        this.onRemoveTaskHandler = this._onRemoveTaskHandler.bind(this);
     }
 
     _togglePriority () {
@@ -47,21 +48,11 @@ class Task extends React.Component {
         const {
             message,
         } = this.props;
-        const {
-            isEditable,
-        } = this.state;
 
-        if (isEditable) {
-            this.onSaveActionHandler();
-            this.setState({
-                isEditable: false,
-            });
-        } else {
-            this.setState({
-                isEditable:  true,
-                description: message,
-            });
-        }
+        this.setState(({ isEditable }) => ({
+            isEditable:  !isEditable,
+            description: message,
+        }));
     }
 
     _onDescriptionChangeHandler ({ target: { value }}) {
@@ -70,7 +61,7 @@ class Task extends React.Component {
         });
     }
 
-    _onSaveActionHandler (event) {
+    _onKeyPressHandler ({ keyCode }) {
         const {
             id,
             updateTaskHandler,
@@ -79,12 +70,28 @@ class Task extends React.Component {
             description,
         } = this.state;
 
-        if (event.key === 'Enter') {
-            updateTaskHandler(id, description);
-            this.setState({
-                isEditable: false,
-            });
+        switch (keyCode) {
+            case 13:
+                updateTaskHandler(id, description);
+                this.setState({
+                    isEditable: false,
+                });
+                break;
+            case 27:
+                this.toggleEdit();
+                break;
+            default:
+                // do nothing
         }
+    }
+
+    _onRemoveTaskHandler () {
+        const {
+            id,
+            removeTaskHandler,
+        } = this.props;
+
+        removeTaskHandler(id);
     }
 
     render () {
@@ -121,7 +128,7 @@ class Task extends React.Component {
                                     type = 'text'
                                     value = { description }
                                     onChange = { this.onDescriptionChangeHandler }
-                                    onKeyPress = { this.onSaveActionHandler }
+                                    onKeyUp = { this.onKeyPressHandler }
                                 />
                             )
                             : <span>{ message }</span>
@@ -148,6 +155,7 @@ class Task extends React.Component {
                         inlineBlock
                         color1 = '#3B8EF3'
                         color2 = '#000'
+                        onClick = { this.onRemoveTaskHandler }
                     />
                 </div>
             </li>

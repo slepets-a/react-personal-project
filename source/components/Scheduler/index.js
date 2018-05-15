@@ -59,6 +59,7 @@ class Scheduler extends React.Component {
         this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
         this.toggleTaskFulfillment = this._toggleTaskFulfillment.bind(this);
         this.updateTaskHandler = this._updateTaskHandler.bind(this);
+        this.removeTaskHandler = this._removeTaskHandler.bind(this);
     }
 
     componentWillMount () {
@@ -156,7 +157,12 @@ class Scheduler extends React.Component {
                     : task,
             ),
         }));
-        console.log(id, description);
+    }
+
+    _removeTaskHandler (id) {
+        this.setState(({ tasks }) => ({
+            tasks: tasks.filter((post) => post.id !== id),
+        }));
     }
 
     render () {
@@ -167,6 +173,7 @@ class Scheduler extends React.Component {
 
         const renderTasks = tasks.map((task) => (<Task
             key = { task.id }
+            removeTaskHandler = { this.removeTaskHandler }
             toggleTaskFulfillment = { this.toggleTaskFulfillment }
             toggleTaskPriority = { this.toggleTaskPriority }
             updateTaskHandler = { this.updateTaskHandler }
