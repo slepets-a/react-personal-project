@@ -5,7 +5,6 @@ import { url, token } from 'config/api';
 
 // Instruments
 import Styles from "./styles.m.css";
-import moment from 'moment';
 
 // Components
 import Task from 'components/Task';
