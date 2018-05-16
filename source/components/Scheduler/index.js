@@ -66,7 +66,7 @@ class Scheduler extends React.Component {
 
     _filterTasksHandler ({ target: { value }}) {
         this.setState({
-            tasksFilter: value,
+            tasksFilter: value.toLowerCase(),
         });
     }
 
@@ -258,7 +258,7 @@ class Scheduler extends React.Component {
         } = this.state;
 
         const renderTasks = tasks
-            .filter(({ message }) => message.includes(tasksFilter))
+            .filter(({ message }) => message.toLowerCase().includes(tasksFilter))
             .map((task) => (<Task
                 key = { task.id }
                 removeTaskHandler = { this.removeTask }
