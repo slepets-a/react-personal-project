@@ -5,6 +5,7 @@ import { url, token } from 'config/api';
 
 // Instruments
 import Styles from "./styles.m.css";
+import moment from 'moment';
 
 // Components
 import Task from 'components/Task';
@@ -21,12 +22,10 @@ class Scheduler extends React.Component {
             taskDescription:  '',
         };
         this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
-        this.onInputChangeHandler = this._onInputChangeHandler.bind(this);
+        this.onNewTaskDescriptionChangeHandler = this._onNewTaskDescriptionChangeHandler.bind(this);
         this.sortTasks = this._sortTasks.bind(this);
-        // this.toggleTaskPriority = this._toggleTaskPriority.bind(this);
-        this.toggleTaskFulfillment = this._toggleTaskFulfillment.bind(this);
-        this.updateTaskHandler = this._updateTaskHandler.bind(this);
         this.onCheckAllAsDoneHandler = this._onCheckAllAsDoneHandler.bind(this);
+
         this.areAllTasksDone = this._areAllTasksDone.bind(this);
         this.filterTasksHandler = this._filterTasksHandler.bind(this);
         this.showSpinner = this._showSpinner.bind(this);
@@ -34,11 +33,11 @@ class Scheduler extends React.Component {
         this.createTask = this._createTask.bind(this);
         this.removeTask = this._removeTask.bind(this);
         this.updateTask = this._updateTask.bind(this);
+        this.sortMethod = this._sortMethod.bind(this);
     }
 
     componentDidMount () {
         this.fetchTasks();
-        this.sortTasks();
     }
 
     _onAddTaskHandler (event) {
@@ -49,37 +48,12 @@ class Scheduler extends React.Component {
         event.preventDefault();
         if (taskDescription) {
             this.createTask(taskDescription);
-            this.sortTasks();
         }
     }
 
-    _onInputChangeHandler ({ target: { value }}) {
+    _onNewTaskDescriptionChangeHandler ({ target: { value }}) {
         this.setState({
             taskDescription: value.slice(0, 50),
-        });
-    }
-
-    // _toggleTaskPriority (id) {
-    //     this.setState(({ tasks }) => ({
-    //         tasks: tasks.map(
-    //             (task) => task.id === id
-    //                 ? { ...task, favorite: !task.favorite }
-    //                 : task
-    //         ),
-    //     }), () => {
-    //         this.sortTasks();
-    //     });
-    // }
-
-    _toggleTaskFulfillment (id) {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(
-                (task) => task.id === id
-                    ? { ...task, completed: !task.completed }
-                    : task
-            ),
-        }), () => {
-            this.sortTasks();
         });
     }
 
@@ -97,6 +71,10 @@ class Scheduler extends React.Component {
         });
     }
 
+    _sortMethod (firstTask, secondTask) {
+        return moment(firstTask.created).valueOf() - moment(secondTask.created).valueOf();
+    }
+
     _sortTasks () {
         const {
             tasks,
@@ -107,7 +85,7 @@ class Scheduler extends React.Component {
             completed: [],
         };
 
-        tasks.forEach((task) => {
+        [...tasks].sort(this.sortMethod).forEach((task) => {
             if (task.completed) {
                 sortedTasks.completed.push(task);
             } else if (task.favorite) {
@@ -126,24 +104,24 @@ class Scheduler extends React.Component {
         });
     }
 
-    _updateTaskHandler (id, description) {
-        this.setState(({ tasks }) => ({
-            tasks: tasks.map(
-                (task) => task.id === id
-                    ? { ...task, message: description }
-                    : task,
-            ),
-        }));
-    }
-
     _onCheckAllAsDoneHandler () {
+        const {
+            tasks,
+        } = this.state;
+
         if (!this.areAllTasksDone()) {
-            this.setState(({ tasks }) => ({
-                tasks: tasks.map((task) => ({
+            this.updateTask(tasks.map(
+                (task) => ({
                     ...task,
                     completed: true,
-                })),
-            }));
+                })
+            ));
+            // this.setState(({ tasks }) => ({
+            //     tasks: tasks.map((task) => ({
+            //         ...task,
+            //         completed: true,
+            //     })),
+            // }));
         }
     }
 
@@ -171,7 +149,9 @@ class Scheduler extends React.Component {
 
             this.setState(({ tasks }) => ({
                 tasks: [...data, ...tasks],
-            }));
+            }), () => {
+                this.sortTasks();
+            });
         } catch ({ message }) {
             console.log(message);
         } finally {
@@ -199,7 +179,9 @@ class Scheduler extends React.Component {
             this.setState(({ tasks }) => ({
                 tasks:           [data, ...tasks],
                 taskDescription: '',
-            }));
+            }), () => {
+                this.sortTasks();
+            });
         } catch ({ message: errMessage }) {
             console.log(errMessage);
         } finally {
@@ -231,7 +213,7 @@ class Scheduler extends React.Component {
         }
     }
 
-    async _updateTask ({ id, message, completed, favorite }) {
+    async _updateTask (tasksList) {
         this.showSpinner(true);
         try {
             const response = await fetch(url, {
@@ -240,17 +222,10 @@ class Scheduler extends React.Component {
                     Authorization:  token,
                     'Content-Type': "application/json",
                 },
-                body: JSON.stringify([{
-                    id,
-                    message,
-                    completed,
-                    favorite,
-                }]),
+                body: JSON.stringify(tasksList),
             });
 
             const { data } = await response.json();
-
-            console.log(data);
 
             if (response.status !== 200) {
                 throw new Error("Edit task failed");
@@ -264,7 +239,9 @@ class Scheduler extends React.Component {
                         }
                         : task
                 ),
-            }));
+            }), () => {
+                this.sortTasks();
+            });
         } catch ({ message: errMessage }) {
             console.log(errMessage);
         } finally {
@@ -285,9 +262,9 @@ class Scheduler extends React.Component {
             .map((task) => (<Task
                 key = { task.id }
                 removeTaskHandler = { this.removeTask }
-                toggleTaskFulfillment = { this.toggleTaskFulfillment }
+                toggleTaskFulfillment = { this.updateTask }
                 toggleTaskPriority = { this.updateTask }
-                updateTaskHandler = { this.updateTaskHandler }
+                updateTaskHandler = { this.updateTask }
                 { ...task }
             />));
 
@@ -310,8 +287,9 @@ class Scheduler extends React.Component {
                                 autoFocus
                                 maxLength = { 50 }
                                 placeholder = 'Описание моей новой задачи'
-                                type = 'text' value = { taskDescription }
-                                onChange = { this.onInputChangeHandler }
+                                type = 'text'
+                                value = { taskDescription }
+                                onChange = { this.onNewTaskDescriptionChangeHandler }
                             />
                             <button onClick = { this.onAddTaskHandler }>Добавить задачу</button>
                         </form>

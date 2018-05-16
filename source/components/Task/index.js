@@ -36,21 +36,29 @@ class Task extends React.Component {
             toggleTaskPriority,
         } = this.props;
 
-        toggleTaskPriority({
+        toggleTaskPriority([{
             id,
             message,
             completed,
             favorite: !favorite,
-        });
+        }]);
     }
 
     _toggleFulfillment () {
         const {
             id,
-            toggleTaskFulfillment,
+            message,
+            completed,
+            favorite,
+            toggleTaskPriority,
         } = this.props;
 
-        toggleTaskFulfillment(id);
+        toggleTaskPriority([{
+            id,
+            message,
+            completed: !completed,
+            favorite,
+        }]);
     }
 
     _toggleEdit () {
@@ -73,6 +81,8 @@ class Task extends React.Component {
     _onKeyPressHandler ({ keyCode }) {
         const {
             id,
+            completed,
+            favorite,
             updateTaskHandler,
         } = this.props;
         const {
@@ -81,7 +91,12 @@ class Task extends React.Component {
 
         switch (keyCode) {
             case 13:
-                updateTaskHandler(id, description);
+                updateTaskHandler([{
+                    id,
+                    message: description,
+                    completed,
+                    favorite,
+                }]);
                 this.setState({
                     isEditable: false,
                 });
