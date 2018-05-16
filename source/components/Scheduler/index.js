@@ -25,7 +25,6 @@ class Scheduler extends React.Component {
         this.onNewTaskDescriptionChangeHandler = this._onNewTaskDescriptionChangeHandler.bind(this);
         this.sortTasks = this._sortTasks.bind(this);
         this.onCheckAllAsDoneHandler = this._onCheckAllAsDoneHandler.bind(this);
-
         this.areAllTasksDone = this._areAllTasksDone.bind(this);
         this.filterTasksHandler = this._filterTasksHandler.bind(this);
         this.showSpinner = this._showSpinner.bind(this);
@@ -116,12 +115,6 @@ class Scheduler extends React.Component {
                     completed: true,
                 })
             ));
-            // this.setState(({ tasks }) => ({
-            //     tasks: tasks.map((task) => ({
-            //         ...task,
-            //         completed: true,
-            //     })),
-            // }));
         }
     }
 
@@ -231,17 +224,24 @@ class Scheduler extends React.Component {
                 throw new Error("Edit task failed");
             }
 
-            this.setState(({ tasks }) => ({
-                tasks: tasks.map(
-                    (task) => task.id === data[0].id
-                        ? {
-                            ...data[0],
-                        }
-                        : task
-                ),
-            }), () => {
-                this.sortTasks();
-            });
+            // All tasks are sent to endpoint only after "All tasks done" checkboxes is checked
+            // Otherwise we update only one task
+            this.setState(
+                ({ tasks }) => data.length > 1
+                    ? {
+                        tasks: [...data],
+                    }
+                    : {
+                        tasks: tasks.map(
+                            (task) => task.id === data[0].id
+                                ? data[0]
+                                : task
+                        ),
+                    },
+                () => {
+                    this.sortTasks();
+                }
+            );
         } catch ({ message: errMessage }) {
             console.log(errMessage);
         } finally {
