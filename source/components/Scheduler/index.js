@@ -1,5 +1,6 @@
 // Core
-import React from "react";
+import React from 'react';
+import Move from 'react-flip-move';
 
 // Instruments
 import Styles from "./styles.m.css";
@@ -66,7 +67,12 @@ export class Scheduler extends React.Component {
                         </form>
                         <div className = { Styles.overlay } >
                             <ul>
-                                {renderTasks}
+                                <Move
+                                    duration = { 250 }
+                                    easing = 'ease-in-out'
+                                    staggerDelayBy = { 100 }>
+                                    {renderTasks}
+                                </Move>
                             </ul>
                         </div>
                     </section>
