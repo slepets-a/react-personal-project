@@ -1,5 +1,6 @@
 // Core
 import React from 'react';
+import { func, string, bool, arrayOf, shape } from 'prop-types';
 import Move from 'react-flip-move';
 
 // Instruments
@@ -90,5 +91,30 @@ export class Scheduler extends React.Component {
         );
     }
 }
+
+Scheduler.propTypes = {
+    areAllTasksDone:    func.isRequired,
+    createTask:         func.isRequired,
+    fetchTasks:         func.isRequired,
+    filterTasksHandler: func.isRequired,
+    isSpinnerShowing:   bool.isRequired,
+    removeTask:         func.isRequired,
+    taskDescription:    string.isRequired,
+    tasks:              arrayOf(
+        shape({
+            id:        string.isRequired,
+            message:   string.isRequired,
+            completed: bool.isRequired,
+            favorite:  bool.isRequired,
+            created:   string.isRequired,
+            modified:  string,
+        })
+    ).isRequired,
+    tasksFilter:                       string.isRequired,
+    updateTask:                        func.isRequired,
+    onAddTaskHandler:                  func.isRequired,
+    onCheckAllAsDoneHandler:           func.isRequired,
+    onNewTaskDescriptionChangeHandler: func.isRequired,
+};
 
 export default withApi(Scheduler);
