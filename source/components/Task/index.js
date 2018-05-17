@@ -33,10 +33,10 @@ class Task extends React.PureComponent {
             message,
             completed,
             favorite,
-            toggleTaskPriority,
+            updateTask,
         } = this.props;
 
-        toggleTaskPriority([{
+        updateTask([{
             id,
             message,
             completed,
@@ -50,10 +50,10 @@ class Task extends React.PureComponent {
             message,
             completed,
             favorite,
-            toggleTaskPriority,
+            updateTask,
         } = this.props;
 
-        toggleTaskPriority([{
+        updateTask([{
             id,
             message,
             completed: !completed,
@@ -83,7 +83,7 @@ class Task extends React.PureComponent {
             id,
             completed,
             favorite,
-            updateTaskHandler,
+            updateTask,
         } = this.props;
         const {
             description,
@@ -91,7 +91,7 @@ class Task extends React.PureComponent {
 
         switch (keyCode) {
             case 13:
-                updateTaskHandler([{
+                updateTask([{
                     id,
                     message: description,
                     completed,
@@ -189,14 +189,12 @@ class Task extends React.PureComponent {
 }
 
 Task.propTypes = {
-    completed:             bool.isRequired,
-    favorite:              bool.isRequired,
-    id:                    string.isRequired,
-    message:               string.isRequired,
-    removeTaskHandler:     func.isRequired,
-    toggleTaskFulfillment: func.isRequired,
-    toggleTaskPriority:    func.isRequired,
-    updateTaskHandler:     func.isRequired,
+    completed:         bool.isRequired,
+    favorite:          bool.isRequired,
+    id:                string.isRequired,
+    message:           string.isRequired,
+    removeTaskHandler: func.isRequired,
+    updateTask:        func.isRequired,
 };
 
 export default Task;

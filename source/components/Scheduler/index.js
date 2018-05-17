@@ -35,9 +35,7 @@ export class Scheduler extends React.Component {
             .map((task) => (<Task
                 key = { task.id }
                 removeTaskHandler = { removeTask }
-                toggleTaskFulfillment = { updateTask }
-                toggleTaskPriority = { updateTask }
-                updateTaskHandler = { updateTask }
+                updateTask = { updateTask }
                 { ...task }
             />));
 
