@@ -17,6 +17,7 @@ const withApi = (Enhanced) =>
             this.showSpinner = this._showSpinner.bind(this);
             this.sortMethod = this._sortMethod.bind(this);
             this.sortTasks = this._sortTasks.bind(this);
+            this.fetchWrapper = this._fetchWrapper.bind(this);
 
             // public
             this.onAddTaskHandler = this._onAddTaskHandler.bind(this);
@@ -121,129 +122,88 @@ const withApi = (Enhanced) =>
             });
         }
 
-        async _fetchTasks () {
+        async _fetchWrapper (endpoint, method, body) {
+            const correctResponseStatus = method === 'DELETE' ? 204 : 200;
+
             this.showSpinner(true);
             try {
-                const response = await fetch(url, {
-                    method:  'GET',
+                const response = await fetch(endpoint, {
+                    method,
                     headers: {
                         Authorization:  token,
                         "Content-Type": "application/json",
                     },
+                    body,
                 });
 
-                if (response.status !== 200) {
-                    throw new Error("Fetch tasks failed");
+                const { status } = response;
+
+                if (status !== correctResponseStatus) {
+                    throw new Error(`Fetch ${method} request failed`);
                 }
-                const { data } = await response.json();
 
-                this.setState(({ tasks }) => ({
-                    tasks: [...data, ...tasks],
-                }), () => {
-                    this.sortTasks();
-                });
-            } catch ({ message }) {
-                console.log(message);
+                if (status === 200) {
+                    const { data } = await response.json();
+
+                    return data;
+                }
+            } catch ({ errMessage }) {
+                console.log(errMessage);
             } finally {
                 this.showSpinner(false);
             }
+        }
+
+        async _fetchTasks () {
+            const data = await this.fetchWrapper(url, 'GET');
+
+            this.setState(({ tasks }) => ({
+                tasks: [...data, ...tasks],
+            }), () => {
+                this.sortTasks();
+            });
         }
 
         async _createTask (message) {
-            this.showSpinner(true);
-            try {
-                const response = await fetch(url, {
-                    method:  'POST',
-                    headers: {
-                        Authorization:  token,
-                        'Content-Type': "application/json",
-                    },
-                    body: JSON.stringify({ message }),
-                });
+            const data = await this.fetchWrapper(url, 'POST', JSON.stringify({ message }));
 
-                if (response.status !== 200) {
-                    throw new Error("Create task failed");
-                }
-                const { data } = await response.json();
-
-                this.setState(({ tasks }) => ({
-                    tasks:           [data, ...tasks],
-                    taskDescription: '',
-                }), () => {
-                    this.sortTasks();
-                });
-            } catch ({ message: errMessage }) {
-                console.log(errMessage);
-            } finally {
-                this.showSpinner(false);
-            }
+            this.setState(({ tasks }) => ({
+                tasks:           [data, ...tasks],
+                taskDescription: '',
+            }), () => {
+                this.sortTasks();
+            });
         }
 
         async _removeTask (id) {
-            this.showSpinner(true);
-            try {
-                const response = await fetch(`${url}/${id}`, {
-                    method:  'DELETE',
-                    headers: {
-                        Authorization: token,
-                    },
-                });
+            await this.fetchWrapper(`${url}/${id}`, 'DELETE');
 
-                if (response.status !== 204) {
-                    throw new Error("Remove task failed");
-                }
-
-                this.setState(({ tasks }) => ({
-                    tasks: tasks.filter((task) => task.id !== id),
-                }));
-            } catch ({ message: errMessage }) {
-                console.log(errMessage);
-            } finally {
-                this.showSpinner(false);
-            }
+            this.setState(({ tasks }) => ({
+                tasks: tasks.filter((task) => task.id !== id),
+            }));
         }
 
         async _updateTask (tasksList) {
-            this.showSpinner(true);
-            try {
-                const response = await fetch(url, {
-                    method:  'PUT',
-                    headers: {
-                        Authorization:  token,
-                        'Content-Type': "application/json",
-                    },
-                    body: JSON.stringify(tasksList),
-                });
+            const data = await this.fetchWrapper(url, 'PUT', JSON.stringify(tasksList));
 
-                const { data } = await response.json();
-
-                if (response.status !== 200) {
-                    throw new Error("Edit task failed");
-                }
-
-                // All tasks are sent to endpoint only after "All tasks done" checkboxes is checked
-                // Otherwise we update only one task
-                this.setState(
-                    ({ tasks }) => data.length > 1
-                        ? {
-                            tasks: [...data],
-                        }
-                        : {
-                            tasks: tasks.map(
-                                (task) => task.id === data[0].id
-                                    ? data[0]
-                                    : task
-                            ),
-                        },
-                    () => {
-                        this.sortTasks();
+            // All tasks are sent to endpoint only after "All tasks done" checkboxes is checked
+            // Otherwise we update only one task
+            this.setState(
+                ({ tasks }) => data.length > 1
+                    ? {
+                        tasks: [...data],
                     }
-                );
-            } catch ({ message: errMessage }) {
-                console.log(errMessage);
-            } finally {
-                this.showSpinner(false);
-            }
+                    : {
+                        tasks: tasks.map(
+                            (task) => task.id === data[0].id
+                                ? data[0]
+                                : task
+                        ),
+                    },
+                () => {
+                    this.sortTasks();
+                }
+            );
         }
 
         render () {
