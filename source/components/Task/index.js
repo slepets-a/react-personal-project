@@ -12,7 +12,7 @@ import Star from 'theme/assets/Star';
 import Edit from 'theme/assets/Edit';
 import Remove from 'theme/assets/Remove';
 
-class Task extends React.Component {
+class Task extends React.PureComponent {
     constructor () {
         super();
         this.state = {
