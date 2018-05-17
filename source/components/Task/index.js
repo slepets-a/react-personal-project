@@ -96,9 +96,10 @@ class Task extends React.PureComponent {
                     message: description,
                     completed,
                     favorite,
-                }]);
-                this.setState({
-                    isEditable: false,
+                }], () => {
+                    this.setState({
+                        isEditable: false,
+                    });
                 });
                 break;
             case 27:

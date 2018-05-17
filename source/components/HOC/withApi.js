@@ -183,7 +183,7 @@ const withApi = (Enhanced) =>
             }));
         }
 
-        async _updateTask (tasksList) {
+        async _updateTask (tasksList, callback) {
             const data = await this.fetchWrapper(url, 'PUT', JSON.stringify(tasksList));
 
             // All tasks are sent to endpoint only after "All tasks done" checkboxes is checked
@@ -202,6 +202,9 @@ const withApi = (Enhanced) =>
                     },
                 () => {
                     this.sortTasks();
+                    if (callback) {
+                        callback();
+                    }
                 }
             );
         }
