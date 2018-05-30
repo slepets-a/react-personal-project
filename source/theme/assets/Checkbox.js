@@ -6,26 +6,29 @@ import { withSvg } from "instruments/withSvg";
 
 class Checkbox extends Component {
     render () {
-        const { checked, color1, color2 } = this.props;
+        const { checked, color1, color2, color3 } = this.props;
 
         const fill = checked ? color1 : color2;
+        const checkBoxFill = checked ? color3 : color2;
 
         return (
             <g>
-                <rect
+                <circle
+                    cx = '12.5'
+                    cy = '12.5'
                     fill = { fill }
                     height = '25'
-                    rx = '5'
-                    ry = '5'
+                    r = '12.5'
                     stroke = { color1 }
-                    style = { { strokeWidth: 2 } }
-                    width = '25'
+                    strokeWidth = '0'
                     x = '1'
                     y = '1'
                 />
-                <path
-                    d = 'M22.12 6c-3.12 3.16-6.84 6.36-10.23 9.64l-5.42-4.05L4 14.84l6.78 5.08L12.23 21l1.25-1.25C17 16.2 21.29 12.6 25 8.89z'
-                    fill = { color2 }
+                <polyline
+                    fill = 'none'
+                    points = '6,12.5 11,18 20,7'
+                    stroke = { checkBoxFill }
+                    strokeWidth = '2'
                 />
             </g>
         );

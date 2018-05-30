@@ -2,15 +2,24 @@
     /* HEX */
     --paletteColor1: #000;
     --paletteColor2: #fff;
-    --paletteColor3: #3b8ef3;
+    /*new*/
+    --paletteColor3: #3f4d5c;
     --paletteColor4: #f5f5f5;
-    --paletteColor5: #313b3d;
-    --paletteColor6: #cccccc;
+    /*new*/
+    --paletteColor5: #8898af;
+    /*new*/
+    --paletteColor6: #23292f;
     --paletteColor7: #363636;
     --paletteColor8: #e4e4e4;
     --paletteColor9: #656565;
     --paletteColor10: #f25a41;
     --paletteColor11: #136BD6;
+    /*new*/
+    --paletteColor12: #2e3540;
+    --paletteColor13: #6d7a8e;
+    --paletteColor14: #00b8fb;
+    --paletteColor15: #475162;
+    --paletteColor16: #56d26c;
 
     /* RGBA */
     --rgbaColor1: rgba(0, 0, 0, 0.1);

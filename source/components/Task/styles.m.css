@@ -3,14 +3,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 61px;
+    min-height: 61px;
     margin-bottom: 13px;
-    padding: 0 20px;
-    background-color: var(--paletteColor2);
+    padding: 10px 20px;
+    background-color: var(--paletteColor12);
     border-radius: 5px;
     box-shadow: 6px 6px 14px var(--rgbaColor1);
     font-size: 20px;
     font-weight: 400;
+    color: var(--paletteColor13);
 
     & svg {
         cursor: pointer;
@@ -19,7 +20,8 @@
     & .content {
         display: flex;
         align-items: center;
-        width: 85%;
+        //width: 85%;
+        flex: 0 1 85%;
 
         & .complete {
             margin-right: 20px;
@@ -29,6 +31,8 @@
             display: flex;
             align-items: center;
             margin-right: 1.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         & input[type='text'] {
@@ -42,9 +46,11 @@
     }
 
     & .actions {
+        display: flex;
+
         & .setPriority,
         & .edit {
-            margin-right: 20px;
+            margin-right: .5rem;
         }
     }
 }

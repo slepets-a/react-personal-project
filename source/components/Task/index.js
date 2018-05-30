@@ -134,14 +134,15 @@ class Task extends React.PureComponent {
         });
 
         return (
-            <li className = { taskStyle }>
+            <li className = { Styles.task }>
                 <div className = { Styles.content } >
                     <Checkbox
                         inlineBlock
                         checked = { completed }
                         className = { Styles.complete }
-                        color1 = '#3b8ef3'
-                        color2 = '#fff'
+                        color1 = '#56d26c'
+                        color2 = '#3f4d5c'
+                        color3 = '#fcfefc'
                         onClick = { this.toggleFulfillment }
                     />
                     {
@@ -165,21 +166,22 @@ class Task extends React.PureComponent {
                         inlineBlock
                         checked = { favorite }
                         className = { Styles.setPriority }
-                        color1 = '#3B8EF3'
-                        color2 = '#000'
+                        color1 = '#ffc868'
+                        color2 = '#3f4d5c'
                         onClick = { this.togglePriority }
                     />
                     <Edit
                         inlineBlock
                         className = { Styles.edit }
-                        color1 = '#3B8EF3'
-                        color2 = '#000'
+                        color1 = '#56d26c'
+                        color2 = '#3f4d5c'
                         onClick = { this.toggleEdit }
                     />
                     <Remove
                         inlineBlock
-                        color1 = '#3B8EF3'
-                        color2 = '#000'
+                        className = { Styles.remove }
+                        color1 = '#ff5358'
+                        color2 = '#3f4d5c'
                         onClick = { this.onRemoveTaskHandler }
                     />
                 </div>

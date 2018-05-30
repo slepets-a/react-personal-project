@@ -79,8 +79,9 @@ export class Scheduler extends React.Component {
                         <Checkbox
                             inlineBlock
                             checked = { areAllTasksDone() }
-                            color1 = '#363636'
-                            color2 = '#fff'
+                            color1 = '#56d26c'
+                            color2 = '#3f4d5c'
+                            color3 = '#fcfefc'
                         />
                         <span className = { Styles.completeAllTasks } >Все задачи выполнены</span>
                     </footer>
