@@ -134,7 +134,7 @@ class Task extends React.PureComponent {
         });
 
         return (
-            <li className = { Styles.task }>
+            <li className = { taskStyle }>
                 <div className = { Styles.content } >
                     <Checkbox
                         inlineBlock
