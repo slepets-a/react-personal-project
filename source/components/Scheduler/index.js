@@ -44,9 +44,9 @@ export class Scheduler extends React.Component {
                 <Spinner isSpinning = { isSpinnerShowing } />
                 <main>
                     <header>
-                        <h1>Планировщик задач</h1>
+                        <h1>Tasks scheduler</h1>
                         <input
-                            placeholder = 'Поиск'
+                            placeholder = 'Search..'
                             type = 'text'
                             value = { tasksFilter }
                             onChange = { filterTasksHandler }
@@ -57,12 +57,12 @@ export class Scheduler extends React.Component {
                             <input
                                 autoFocus
                                 maxLength = { 50 }
-                                placeholder = 'Описание моей новой задачи'
+                                placeholder = 'New task description'
                                 type = 'text'
                                 value = { taskDescription }
                                 onChange = { onNewTaskDescriptionChangeHandler }
                             />
-                            <button onClick = { onAddTaskHandler }>Добавить задачу</button>
+                            <button onClick = { onAddTaskHandler }>Add task</button>
                         </form>
                         <div className = { Styles.overlay } >
                             <ul>
@@ -83,7 +83,7 @@ export class Scheduler extends React.Component {
                             color2 = '#3f4d5c'
                             color3 = '#fcfefc'
                         />
-                        <span className = { Styles.completeAllTasks } >Все задачи выполнены</span>
+                        <span className = { Styles.completeAllTasks } >All tasks done</span>
                     </footer>
                 </main>
             </section>
