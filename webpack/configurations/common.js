@@ -68,11 +68,14 @@ export const generateCommonConfiguration = () => {
         },
         plugins: [
             new HtmlWebpackPlugin({
-                inject:      false,
-                template:    HtmlWebpackTemplate,
-                title:       'React personal project',
-                appMountIds: ['app', 'spinner'],
-                mobile:      true,
+                inject:          false,
+                template:        HtmlWebpackTemplate,
+                title:           'React personal project',
+                appMountIds:     ['app', 'spinner'],
+                mobile:          true,
+                googleAnalytics: {
+                    trackingId: 'UA-120234131-1',
+                },
             }),
             new ContextReplacementPlugin(/moment\/locale$/, /ru/),
             new DefinePlugin({
