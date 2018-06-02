@@ -74,7 +74,8 @@ export const generateCommonConfiguration = () => {
                 appMountIds:     ['app', 'spinner'],
                 mobile:          true,
                 googleAnalytics: {
-                    trackingId: 'UA-120234131-1',
+                    trackingId:     'UA-120234131-1',
+                    pageViewOnLoad: true,
                 },
             }),
             new ContextReplacementPlugin(/moment\/locale$/, /ru/),
